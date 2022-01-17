@@ -8,7 +8,7 @@ console.log(apiKeyWeather);
 
 //Get Current Weather by city name
 const currentWeatherCity = async (req, res) => {
-  const city = "kolkata";
+  const city = req.body.city;
   const url = `api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKeyWeather}`;
   const resUrl = fetch(url);
   const result = resUrl.json();
@@ -18,7 +18,12 @@ const currentWeatherCity = async (req, res) => {
 
 //Get Next 7 day Weather by city name
 const weeklyWeatherCity = async (req, res) => {
-  const result = await result;
+  const city = req.body.city;
+  const url = `api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKeyWeather}`;
+  const resUrl = fetch(url);
+  const result = resUrl.json();
+  console.log(result);
+  res.send(result);
 };
 
 //Get Current Weather by latitude and longitude
