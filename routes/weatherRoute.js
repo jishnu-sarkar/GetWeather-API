@@ -2,12 +2,14 @@ const express = require("express");
 const weatherController = require("../controllers/weatherController");
 const router = express.Router();
 
-router.get("/", weatherController.currentWeatherCity);
-
 router.post("/", weatherController.currentWeatherCity);
 
-router.post("/:id", weatherController.weeklyWeatherCity);
+router.post("/w", weatherController.weeklyWeatherCity); //id in betweet 1-16 we will use only 7 : w demo
 
-router.post("/ip");
+router.post("/latlong", weatherController.currentWeatherLatLong);
+
+router.post("/latlong/w", weatherController.weeklyWeatherLatLong); //id in betweet 1-16 we will use only 7 : w demo
+
+router.post("/ip", weatherController.currentWeatherIP);
 
 module.exports = router;
