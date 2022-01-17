@@ -9,3 +9,11 @@ const app = express();
 app.use(bodyParser.json());
 
 app.use("/weather", weatherRoute);
+
+app.listen(PORT, (err) => {
+  if (err) {
+    console.log("Server Not Connected !!", err);
+  } else {
+    console.log(`Connected!!\nlocation : http://localhost:${PORT}`);
+  }
+});

@@ -1,8 +1,19 @@
+const fetch = require("node-fetch");
 const lodash = require("lodash");
+
+require("dotenv").config();
+
+const apiKeyWeather = `${process.env.apiKeyWeather}`;
+console.log(apiKeyWeather);
 
 //Get Current Weather by city name
 const currentWeatherCity = async (req, res) => {
-  const result = await result;
+  const city = "kolkata";
+  const url = `api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKeyWeather}`;
+  const resUrl = fetch(url);
+  const result = resUrl.json();
+  console.log(result);
+  res.send(result);
 };
 
 //Get Next 7 day Weather by city name
