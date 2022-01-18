@@ -1,0 +1,1 @@
+{"parent":null,"pid":27531,"argv":["/usr/bin/node","/usr/local/bin/npm","run","test"],"execArgv":[],"cwd":"/home/ubuntu/Desktop/NODE-JS/GetWeatherAPI","time":1642512547303,"ppid":27520,"coverageFilename":"/home/ubuntu/Desktop/NODE-JS/GetWeatherAPI/.nyc_output/5c72b702-65dd-4f50-b36a-2c3b6e3920d9.json","externalId":"","uuid":"5c72b702-65dd-4f50-b36a-2c3b6e3920d9","files":[]}
