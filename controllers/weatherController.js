@@ -1,21 +1,24 @@
 fetch = require("node-fetch");
-// import fetch from "node-fetch";
 const _ = require("lodash");
 
 require("dotenv").config();
-
 const apiKeyWeather = `${process.env.apiKeyWeather}`;
-// console.log(apiKeyWeather);
 
 //Get Current Weather by city name
 const currentWeatherCity = async (req, res) => {
   const city = req.query.cityName;
+
   console.log(city);
+
   const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKeyWeather}`;
+
   const resUrl = await fetch(url);
+
   if (!_.isEmpty(resUrl)) {
     const result = await resUrl.json();
+
     console.log(result);
+
     res.status(202).json({
       location: result.name,
       temperature: result.main.temp,
