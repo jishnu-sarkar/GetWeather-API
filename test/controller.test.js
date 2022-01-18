@@ -1,7 +1,9 @@
 const sinon = require("sinon");
 const chai = require("chai");
+
 const chaiFetch = require("chai-fetch");
 chai.use(chaiFetch);
+
 const expect = chai.expect;
 require("dotenv").config();
 const apiKeyWeather = `${process.env.apiKeyWeather}`;
