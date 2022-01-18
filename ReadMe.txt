@@ -26,7 +26,7 @@ pass the lat value for { latitude } and lon value for{ longitude }
 this is the default route where by default it will fetch the ip of the user and detect the location based on the ip, after getting city it will show the weather report of that city;
 
 
-
+Requirement:
 to setup the api you have to install :
 1. "body-parser"
 2. "dotenv"
