@@ -109,7 +109,7 @@ const weeklyWeatherLatLong = async (req, res) => {
 
 //Get Current Weather Based upon User's current IP Location
 const currentWeatherIP = async (req, res) => {
-  let url = `http://ip-api.com/json`; //getting the ip details
+  let url = `http://ip-api.com/json/`; //getting the ip details
   let resUrl = await fetch(url);
   let result = await resUrl.json();
   const ip = result.query;

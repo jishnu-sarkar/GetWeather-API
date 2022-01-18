@@ -1,3 +1,5 @@
+This is a Weather-API which allow us to get weather details in five ways
+
 //GET REQUESTS 
 1.http://localhost:8080/weather/city?cityName=kolkata 
 ==>
