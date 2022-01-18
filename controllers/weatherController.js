@@ -1,6 +1,6 @@
 fetch = require("node-fetch");
 // import fetch from "node-fetch";
-const lodash = require("lodash");
+const _ = require("lodash");
 
 require("dotenv").config();
 
@@ -13,7 +13,7 @@ const currentWeatherCity = async (req, res) => {
   console.log(city);
   const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKeyWeather}`;
   const resUrl = await fetch(url);
-  if (!lodash.isEmpty(resUrl)) {
+  if (!_.isEmpty(resUrl)) {
     const result = await resUrl.json();
     console.log(result);
     res.status(202).json({
@@ -39,23 +39,20 @@ const weeklyWeatherCity = async (req, res) => {
   console.log(lat, long);
   url = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${long}&exclude=${part}&units=metric&appid=${apiKeyWeather}`;
   resUrl = await fetch(url);
-  if (!lodash.isEmpty(resUrl)) {
-    const result = await resUrl.json();
-    const output = [];
+  if (!_.isEmpty(resUrl)) {
+    let result = await resUrl.json();
     const location = result.timezone;
-    for (value in result.daily) {
-      // const loc = location;
-      // const temp = value.temp;
-      // const date = new Date(value.dt * 1000).toLocaleDateString();
-      console.log(value);
-      await output.push({
+    // const data = result.daily;
+    // result = result.daily.map((val) => {
+    result = _.map(result.daily, (val) => {
+      return {
         location: location,
-        temperature: value.temp,
-        date: new Date(value.dt * 1000).toLocaleDateString(),
-      });
-    }
-    console.log(output);
-    res.status(202).json({ output });
+        temperature: val.temp,
+        date: new Date(val.dt * 1000).toLocaleDateString(),
+      };
+    });
+    console.log(result);
+    res.status(202).json({ result });
   } else {
     res.status(404).json({ message: "something went wrong" });
   }
@@ -69,7 +66,7 @@ const currentWeatherLatLong = async (req, res) => {
   const part = "minutely,hourly,daily,alerts";
   const url = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${long}&exclude=${part}&units=metric&appid=${apiKeyWeather}`;
   const resUrl = await fetch(url);
-  if (!lodash.isEmpty(resUrl)) {
+  if (!_.isEmpty(resUrl)) {
     const result = await resUrl.json();
     console.log(result);
     res.status(202).json({
@@ -91,8 +88,18 @@ const weeklyWeatherLatLong = async (req, res) => {
   const part = "current,minutely,hourly,alerts";
   const url = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${long}&exclude=${part}&units=metric&appid=${apiKeyWeather}`;
   const resUrl = await fetch(url);
-  if (!lodash.isEmpty(resUrl)) {
-    const result = await resUrl.json();
+  if (!_.isEmpty(resUrl)) {
+    let result = await resUrl.json();
+    const temp = result;
+    const location = result.timezone;
+    // result = result.daily.map((val) => {
+    result = _.map(result.daily, (val) => {
+      return {
+        location: location,
+        temperature: val.temp,
+        date: new Date(val.dt * 1000).toLocaleDateString(),
+      };
+    });
     console.log(result);
     res.status(202).json({ result });
   } else {
@@ -109,7 +116,7 @@ const currentWeatherIP = async (req, res) => {
   const city = `${result.city}`; //taking the city from details
   url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKeyWeather}`;
   resUrl = await fetch(url);
-  if (!lodash.isEmpty(resUrl)) {
+  if (!_.isEmpty(resUrl)) {
     const result = await resUrl.json();
     console.log(result);
     res.status(202).json({
