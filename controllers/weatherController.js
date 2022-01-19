@@ -1,8 +1,9 @@
-fetch = require("node-fetch");
 const _ = require("lodash");
 
 require("dotenv").config();
 const apiKeyWeather = `${process.env.apiKeyWeather}`;
+
+const { fetch } = require("../library/fetchAPI");
 
 //Get Current Weather by city name
 const currentWeatherCity = async (req, res) => {
@@ -19,13 +20,13 @@ const currentWeatherCity = async (req, res) => {
 
     console.log(result);
 
-    res.status(202).json({
+    return res.status(202).json({
       location: result.name,
       temperature: result.main.temp,
       date: new Date(result.dt * 1000).toLocaleDateString(),
     });
   } else {
-    res.status(404).json({ message: "something went wrong" });
+    return res.status(404).json({ message: "something went wrong" });
   }
 };
 
