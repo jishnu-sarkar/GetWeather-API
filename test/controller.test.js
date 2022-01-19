@@ -1,45 +1,39 @@
-const sinon = require("sinon");
 const chai = require("chai");
-
-const chaiFetch = require("chai-fetch");
-chai.use(chaiFetch);
-
+const sinon = require("sinon");
 const expect = chai.expect;
+
 require("dotenv").config();
 const apiKeyWeather = `${process.env.apiKeyWeather}`;
 
+const fetchLib = require("../library/fetchAPI");
+
 const weatherController = require("../controllers/weatherController");
-const { currentWeatherCity } = require("../controllers/weatherController");
 
 describe("weatherController", () => {
-  describe("currentWeatherCity", () => {
-    let status, json, res;
+  describe("getting currentWeather by IP", () => {
+    let req, res, json, status, fetch;
     beforeEach(() => {
       status = sinon.stub();
-      json = sinon.stub();
-      status.returns({ json });
+      json = sinon.spy();
+      res = { json, status };
+      status.returns(res);
+      fetch = sinon.stub(fetchLib, "fetch");
     });
-
-    let req = { query: { cityName: "kolkata" } };
-    let url = `https://api.openweathermap.org/data/2.5/weather?q=${req.query.cityName}&units=metric&appid=${apiKeyWeather}`;
-
-    // it("should get current weather using user IP", async function () {
-    //   // expect(2 + 2 == 4).to.be.true;
-    //   await weatherController.currentWeatherCity(req, res);
-    //   expect(result.withArgs(req, res).calledOnce).to.be.true;
+    // afterEach(() => {
+    //   status.restore();
+    //   json.restore();
+    //   fetch.restore();
     // });
-    it("should get 7", async () => {
-      await fetch(url)
-        .then((res) => {
-          const temp = await.json();
-          console.log(temp);
-          return res.json();
-        })
-        .then((res) => {
-          console.log(res);
-          expect({ title: 1 }).to.be.true;
-        });
+    it("should fetch the location using user ip and then fetch the current weather", async () => {
+      req = {
+        query: {
+          cityName: "Jishnu",
+        },
+      };
+      fetch.resolves(null);
+      const result = await weatherController.currentWeatherCity(req, res);
+      expect(status.calledWith(404)).to.be.true;
+      expect(json.calledWith({ message: "something went wrong" })).to.be.true;
     });
   });
-  //   describe();
 });
