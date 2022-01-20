@@ -25,8 +25,6 @@ const currentWeatherCity = async (req, res) => {
 
     const result = await resUrl.json();
 
-    console.log(result);
-
     //database insertion
     const searchItem = {
       Request: "Weather by City Name",
@@ -47,6 +45,7 @@ const currentWeatherCity = async (req, res) => {
       searchData
     );
 
+    console.log(result);
     return res.status(202).json({
       // userId: userId,
       location: result.name,
@@ -92,22 +91,33 @@ const weeklyWeatherCity = async (req, res) => {
       };
     });
 
+    // const searchItem = {
+    //   Request: "Weather by City Name",
+    //   Response: {
+    //     result,
+    //   },
+    // };
+
+    // console.log(_.last(result).date);
+
     const searchItem = {
-      Request: "Weather by City Name",
+      Request: "Weekly Weather by City Name",
       Response: {
-        result,
+        location: _.head(result).location,
+        from: _.head(result).date,
+        to: _.last(result).date,
       },
     };
+
     // const searchItem = result;
 
-    //   console.log(JSON.stringify(searchItem));
+    // console.log(searchItem);
 
     const searchData = {
       id: id,
       searchItem: JSON.stringify(searchItem),
       userId: userId,
     };
-    // return res.status(202).json({ searchItem });
 
     const insertSearchData = await db.sequelize.models.Search.insertSearchData(
       searchData
@@ -148,8 +158,6 @@ const currentWeatherLatLong = async (req, res) => {
         date: new Date(result.current.dt * 1000).toLocaleDateString(),
       },
     };
-
-    //   console.log(JSON.stringify(searchItem));
 
     const searchData = {
       id: id,
@@ -203,22 +211,29 @@ const weeklyWeatherLatLong = async (req, res) => {
       };
     });
 
+    // const searchItem = {
+    //   Request: "Weekly Weather by GeoLocation",
+    //   Response: {
+    //     result,
+    //   },
+    // };
+
     const searchItem = {
       Request: "Weekly Weather by GeoLocation",
       Response: {
-        result,
+        location: _.head(result).location,
+        latitude: lat,
+        longitude: long,
+        from: _.head(result).date,
+        to: _.last(result).date,
       },
     };
-    // const searchItem = result;
-
-    //   console.log(JSON.stringify(searchItem));
 
     const searchData = {
       id: id,
       searchItem: JSON.stringify(searchItem),
       userId: userId,
     };
-    // return res.status(202).json({ searchItem });
 
     const insertSearchData = await db.sequelize.models.Search.insertSearchData(
       searchData
@@ -251,7 +266,7 @@ const currentWeatherIP = async (req, res) => {
     }
 
     result = await resUrl.json();
-    //   console.log(result);
+
     const searchItem = {
       Request: "Weather by IP",
       Response: {
@@ -261,8 +276,6 @@ const currentWeatherIP = async (req, res) => {
         date: new Date(result.dt * 1000).toLocaleDateString(),
       },
     };
-
-    //   console.log(JSON.stringify(searchItem));
 
     const searchData = {
       id: id,
@@ -274,6 +287,7 @@ const currentWeatherIP = async (req, res) => {
       searchData
     );
 
+    console.log(result);
     return res.status(202).json({
       // userId: userId,
       ip: ip,

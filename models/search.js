@@ -1,5 +1,6 @@
 "use strict";
 const { Model } = require("sequelize");
+const _ = require("lodash");
 module.exports = (sequelize, DataTypes) => {
   class Search extends Model {
     /**
@@ -13,15 +14,29 @@ module.exports = (sequelize, DataTypes) => {
   }
   Search.insertSearchData = function (val) {
     return this.create({
-      // id: val.id,
-      // searchItem: val.searchItem,
-      // userId: val.userId,
       ...val,
     });
   };
 
-  Search.getSearchHistory = function (id) {
-    return this.findByPk(id);
+  Search.getSearchHistory = function (val) {
+    console.log(val);
+    if (_.isEqual(val.limit, 0)) {
+      console.log("im mexecuting");
+      return this.findAll({
+        where: {
+          userId: val.userId,
+        },
+        order: [["createdAt", "DESC"]],
+      });
+    }
+    return this.findAll({
+      where: {
+        userId: val.userId,
+      },
+      limit: val.limit,
+      order: [["createdAt", "DESC"]],
+      // limit: parseInt(val.limit),
+    });
   };
 
   Search.init(

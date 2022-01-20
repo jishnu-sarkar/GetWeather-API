@@ -46,11 +46,14 @@ const createUser = async (req, res) => {
 
 const userLogin = async (req, res) => {
   try {
+    if (_.size(req.body.inputs) != 2) {
+      return res.status(400).json({ message: "Insufficient Data to Proceed" });
+    }
     userDetails = {
       email: req.body.inputs.email,
     };
 
-    const fetchUser = await db.sequelize.models.User.fetchUser(userDetails);
+    const fetchUser = await db.sequelize.models.User.findUser(userDetails);
     // console.log(fetchUser[0].password);
 
     if (!fetchUser) {
@@ -58,7 +61,10 @@ const userLogin = async (req, res) => {
     }
 
     if (
-      hashedPassword.verify(req.body.inputs.password, fetchUser[0].password)
+      hashedPassword.verify(
+        req.body.inputs.password,
+        _.head(fetchUser).password
+      )
     ) {
       return res.status(200).json({
         message: "Logged In",
@@ -72,6 +78,35 @@ const userLogin = async (req, res) => {
   }
 };
 
+const userSearchHistory = async (req, res) => {
+  const userId = req.query.id;
+  let limit = 10;
+  // if (
+  //   _.isEqual(req.query.limit, "all") ||
+  //   _.isEqual(req.query.limit, "All") ||
+  //   _.isEqual(req.query.limit, "ALL")
+  // ) {
+  //   limit = 0;
+  // }
+  // if (_.isInteger(req.query.limit)) {
+  //   limit = req.query.limit;
+  // }
+  if (req.query.limit) {
+    limit = req.query.limit;
+  }
+
+  const values = {
+    userId: userId,
+    limit: parseInt(limit),
+  };
+
+  const result = await db.sequelize.models.Search.getSearchHistory(values);
+
+  // const result = await getSearchHistory.json();
+
+  res.status(200).json({ result });
+};
+
 // const delUsers = async (req, res) => {
 //   const result = await db.sequelize.models.User.deleteUsers();
 //   return res.status(201).json({ Deleted: "All Record Deleted" });
@@ -80,5 +115,6 @@ const userLogin = async (req, res) => {
 module.exports = {
   createUser: createUser,
   userLogin: userLogin,
+  userSearchHistory: userSearchHistory,
   // delUsers: delUsers,
 };

@@ -1,30 +1,11 @@
 This is a Weather-API which allow us to get weather details in five ways
 
-//GET REQUESTS 
-1.http://localhost:8080/weather/city?cityName=kolkata 
-==>
-to get the current weather details by providing cityname;
+which also have two different types of search, 
+i) Authorized Search:
+    in this search user can check their search history.
 
-
-2.http://localhost:8080/weather/city/forecast?cityName=kolkata
-==>
-to get the weekly weather details by providing cityname;
-
-3.http://localhost:8080/weather/latlon?lat=22.5697&lon=88.3697
-==>
-to get the current weather details by providing latitude and longitude;
-pass the lat value for { latitude } and lon value for{ longitude }
-
-4.http://localhost:8080/weather/latlon/forecast?lat=22.5697&lon=88.3697
-==>
-to get the weekly weather details by providing latitude and longitude;
-pass the lat value for { latitude } and lon value for{ longitude }
-
-
-5.http://localhost:8080/weather
-==>
-this is the default route where by default it will fetch the ip of the user and detect the location based on the ip, after getting city it will show the weather report of that city;
-
+ii) Unsuthorized Search:
+    in this search users can not check their search history.
 
 Requirement:
 to setup the api you have to install :
@@ -41,4 +22,4 @@ app.js is the starting point of our api which is creating a server which is list
 
 from there we passed a route towards weatherRoute.js where all the path are defind.
 
-from every path we called the functions from controller
+from every path we called the functions from controller.
