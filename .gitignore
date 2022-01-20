@@ -1,6 +1,3 @@
 ER-DIAGRAM
 node_modules
 .env
-.nyc_output
-coverage
-test
