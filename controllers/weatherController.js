@@ -65,7 +65,6 @@ const weeklyWeatherCity = async (req, res) => {
 
 //Get Current Weather by latitude and longitude
 const currentWeatherLatLong = async (req, res) => {
-  const city = req.query.city;
   const lat = req.query.lat;
   const long = req.query.lon;
   const part = "minutely,hourly,daily,alerts";
@@ -86,7 +85,6 @@ const currentWeatherLatLong = async (req, res) => {
 
 //Get Next 7 day by latitude and longitude
 const weeklyWeatherLatLong = async (req, res) => {
-  const city = req.query.city;
   const lat = req.query.lat;
   const long = req.query.lon;
   const part = "current,minutely,hourly,alerts";
@@ -115,7 +113,7 @@ const currentWeatherIP = async (req, res) => {
   let url = `http://ip-api.com/json/`; //getting the ip details
   let resUrl = await fetchAPI.fetch(url);
   let result = await resUrl.json();
-  const ip = result.query;
+  const ip = `${result.query}`;
   const city = `${result.city}`; //taking the city from details
 
   url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKeyWeather}`;
