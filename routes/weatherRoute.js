@@ -1,6 +1,6 @@
 const express = require("express");
-const weatherController = require("../controllers/weatherController");
 const router = express.Router();
+const weatherController = require("../controllers/weatherController");
 
 router.get("/city", weatherController.currentWeatherCity);
 

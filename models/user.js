@@ -11,7 +11,24 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   }
-
+  User.findEmail = function (val) {
+    // console.log("checkingEmail");
+    return this.findOne({ where: { email: val } });
+  };
+  User.createUser = function (val) {
+    return this.create({
+      ...val,
+    });
+  };
+  User.fetchUser = function (val) {
+    console.log(val);
+    return this.findOne({
+      where: {
+        email: val.email,
+        password: val.password,
+      },
+    });
+  };
   User.init(
     {
       firstName: DataTypes.STRING,
