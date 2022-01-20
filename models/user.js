@@ -23,21 +23,21 @@ module.exports = (sequelize, DataTypes) => {
     });
   };
 
-  User.fetchUser = function (val) {
-    // console.log(val);
-    return this.findAll({
-      where: {
-        email: val.email,
-      },
-    });
-  };
+  // User.fetchUser = function (val) {
+  //   // console.log(val);
+  //   return this.findAll({
+  //     where: {
+  //       email: val.email,
+  //     },
+  //   });
+  // };
 
-  User.deleteUsers = function () {
-    return this.destroy({
-      where: {},
-      truncate: true,
-    });
-  };
+  // User.deleteUsers = function () {
+  //   return this.destroy({
+  //     where: {},
+  //     truncate: true,
+  //   });
+  // };
 
   User.init(
     {

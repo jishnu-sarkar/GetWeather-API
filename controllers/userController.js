@@ -49,23 +49,17 @@ const userLogin = async (req, res) => {
     if (_.size(req.body.inputs) != 2) {
       return res.status(400).json({ message: "Insufficient Data to Proceed" });
     }
-    userDetails = {
-      email: req.body.inputs.email,
-    };
+    const email = req.body.inputs.email;
 
-    const fetchUser = await db.sequelize.models.User.findUser(userDetails);
+    const fetchUser = await db.sequelize.models.User.findUser(email);
     // console.log(fetchUser[0].password);
 
     if (!fetchUser) {
       res.status(404).json({ message: "User not found" });
     }
+    // console.log(fetchUser.password);
 
-    if (
-      hashedPassword.verify(
-        req.body.inputs.password,
-        _.head(fetchUser).password
-      )
-    ) {
+    if (hashedPassword.verify(req.body.inputs.password, fetchUser.password)) {
       return res.status(200).json({
         message: "Logged In",
         // userDetails: fetchUser,
