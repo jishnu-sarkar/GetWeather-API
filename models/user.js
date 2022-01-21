@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
   }
 
   User.findUser = function (val) {
-    // console.log("checkingEmail");
+    // console.log(val);
     return this.findOne({ where: { email: val } });
   };
 

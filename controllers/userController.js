@@ -23,7 +23,7 @@ const createUser = async (req, res) => {
     const emailExists = await db.sequelize.models.User.findUser(
       userDetails.email
     );
-    // console.log("im checking email" + emailExists);
+    console.log(emailExists);
 
     if (emailExists) {
       return res.status(409).json({ message: "Email already registered" });
@@ -39,7 +39,7 @@ const createUser = async (req, res) => {
       return res.status(404).json({ message: "Something Went Wrong!!!" });
     }
   } catch (err) {
-    // console.log(err.message);
+    console.log(err.message);
     return res.status(464).json({ message: err.message });
   }
 };
@@ -55,7 +55,7 @@ const userLogin = async (req, res) => {
     // console.log(fetchUser[0].password);
 
     if (!fetchUser) {
-      res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: "User not found" });
     }
     // console.log(fetchUser.password);
 
@@ -65,40 +65,35 @@ const userLogin = async (req, res) => {
         // userDetails: fetchUser,
       });
     } else {
-      res.status(401).json({ message: "Incorrect Password" });
+      return res.status(401).json({ message: "Incorrect Password" });
     }
   } catch (err) {
+    console.log(err.message);
     return res.status(464).json({ message: err.message });
   }
 };
 
 const userSearchHistory = async (req, res) => {
-  const userId = req.query.id;
-  let limit = 10;
-  // if (
-  //   _.isEqual(req.query.limit, "all") ||
-  //   _.isEqual(req.query.limit, "All") ||
-  //   _.isEqual(req.query.limit, "ALL")
-  // ) {
-  //   limit = 0;
-  // }
-  // if (_.isInteger(req.query.limit)) {
-  //   limit = req.query.limit;
-  // }
-  if (req.query.limit) {
-    limit = req.query.limit;
+  try {
+    const userId = req.query.id;
+    let limit = 10;
+    if (req.query.limit) {
+      limit = req.query.limit;
+    }
+
+    const values = {
+      userId: userId,
+      limit: parseInt(limit),
+    };
+
+    const result = await db.sequelize.models.Search.getSearchHistory(values);
+
+    console.log(result);
+    return res.status(200).json({ result });
+  } catch (err) {
+    console.log(err.message);
+    return res.status(464).json({ message: err.message });
   }
-
-  const values = {
-    userId: userId,
-    limit: parseInt(limit),
-  };
-
-  const result = await db.sequelize.models.Search.getSearchHistory(values);
-
-  // const result = await getSearchHistory.json();
-
-  res.status(200).json({ result });
 };
 
 // const delUsers = async (req, res) => {

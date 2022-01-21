@@ -19,9 +19,9 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   Search.getSearchHistory = function (val) {
-    console.log(val);
+    // console.log(val);
     if (_.isEqual(val.limit, 0)) {
-      console.log("im mexecuting");
+      // console.log("im mexecuting");
       return this.findAll({
         where: {
           userId: val.userId,
