@@ -126,6 +126,7 @@ const weeklyWeatherCity = async (req, res) => {
     console.log(result);
     return res.status(202).json({ result });
   } catch (err) {
+    console.log(err.message);
     return res.status(464).json({ message: err.message });
   }
 };
@@ -178,6 +179,7 @@ const currentWeatherLatLong = async (req, res) => {
       date: new Date(result.current.dt * 1000).toLocaleDateString(),
     });
   } catch (err) {
+    console.log(err.message);
     return res.status(464).json({ message: err.message });
   }
 };
@@ -242,6 +244,7 @@ const weeklyWeatherLatLong = async (req, res) => {
     console.log(result);
     return res.status(202).json({ result });
   } catch (err) {
+    console.log(err.message);
     return res.status(464).json({ message: err.message });
   }
 };
@@ -296,6 +299,7 @@ const currentWeatherIP = async (req, res) => {
       date: new Date(result.dt * 1000).toLocaleDateString(),
     });
   } catch (err) {
+    console.log(err.message);
     return res.status(464).json({ message: err.message });
   }
 };
