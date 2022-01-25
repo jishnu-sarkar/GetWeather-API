@@ -1,15 +1,29 @@
-const res = require("express/lib/response");
+// const res = require("express/lib/response");
+// const joi = require("joi");
+require("dotenv").config();
+// process.env.tokenJWT = 1234;
+const jwt = require("jsonwebtoken");
 const _ = require("lodash");
 const hashedPassword = require("password-hash");
+const Chance = require("chance");
+const chance = new Chance();
 const db = require("../models");
 
 const createUser = async (req, res) => {
   try {
-    if (_.size(req.body.inputs) != 4) {
-      return res.status(400).json({ message: "Insufficient Data to Proceed" });
-    }
+    // console.log(req.val);
+    // console.log(val);
+    // if (_.size(req.body.inputs) != 5) {
+    //   return res.status(400).json({ message: "Insufficient Data to Proceed" });
+    // }
 
-    const id = Math.floor(100000 + Math.random() * 900000);
+    // if (!_.isEqual(req.body.inputs.password, req.body.inputs.reEnterPassword)) {
+    //   return res.status(404).json({ message: "Password Missmatched" });
+    // }
+
+    // const id = Math.floor(100000 + Math.random() * 900000);
+    const id = chance.integer({ min: 100000, max: 999999 });
+    // console.log(id);
     const hashedPass = hashedPassword.generate(req.body.inputs.password);
 
     const userDetails = {
@@ -23,7 +37,7 @@ const createUser = async (req, res) => {
     const emailExists = await db.sequelize.models.User.findUser(
       userDetails.email
     );
-    console.log(emailExists);
+    // console.log(emailExists);
 
     if (emailExists) {
       return res.status(409).json({ message: "Email already registered" });
@@ -46,6 +60,7 @@ const createUser = async (req, res) => {
 
 const userLogin = async (req, res) => {
   try {
+    console.log(`${process.env.tokenJWT}`);
     if (_.size(req.body.inputs) != 2) {
       return res.status(400).json({ message: "Insufficient Data to Proceed" });
     }
@@ -60,6 +75,9 @@ const userLogin = async (req, res) => {
     // console.log(fetchUser.password);
 
     if (hashedPassword.verify(req.body.inputs.password, fetchUser.password)) {
+      process.env.tokenJWT = jwt.sign(email, "secret");
+      // console.log(process.env.tokenJWT);
+      // console.log(jwt.verify(process.env.tokenJWT, "secret"));
       return res.status(200).json({
         message: "Logged In",
         // userDetails: fetchUser,
@@ -75,14 +93,14 @@ const userLogin = async (req, res) => {
 
 const userSearchHistory = async (req, res) => {
   try {
-    const userId = req.query.id;
+    // const userId = req.query.id;
     let limit = 10;
     if (req.query.limit) {
       limit = req.query.limit;
     }
 
     const values = {
-      userId: userId,
+      userId: req.userId,
       limit: parseInt(limit),
     };
 
@@ -95,11 +113,6 @@ const userSearchHistory = async (req, res) => {
     return res.status(464).json({ message: err.message });
   }
 };
-
-// const delUsers = async (req, res) => {
-//   const result = await db.sequelize.models.User.deleteUsers();
-//   return res.status(201).json({ Deleted: "All Record Deleted" });
-// };
 
 module.exports = {
   createUser: createUser,

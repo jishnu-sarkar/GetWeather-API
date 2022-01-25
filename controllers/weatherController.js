@@ -1,10 +1,11 @@
-const _ = require("lodash");
-
 require("dotenv").config();
-const apiKeyWeather = `${process.env.apiKeyWeather}`;
+const _ = require("lodash");
+// const fetchAPI = require("node-fetch");
 
 const fetchAPI = require("../library/fetchAPI");
 const db = require("../models");
+
+const apiKeyWeather = `${process.env.apiKeyWeather}`;
 
 //Get Current Weather by city name
 const currentWeatherCity = async (req, res) => {

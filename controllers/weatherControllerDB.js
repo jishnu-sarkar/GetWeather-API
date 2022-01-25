@@ -1,16 +1,17 @@
+require("dotenv").config();
 const _ = require("lodash");
 
-require("dotenv").config();
-const apiKeyWeather = `${process.env.apiKeyWeather}`;
-
 const fetchAPI = require("../library/fetchAPI");
+// const fetchAPI = require("node-fetch");
 const db = require("../models");
+
+const apiKeyWeather = `${process.env.apiKeyWeather}`;
 
 //Get Current Weather by city name
 const currentWeatherCity = async (req, res) => {
   try {
     const id = Math.floor(100000 + Math.random() * 900000);
-    const userId = req.query.id;
+    // const userId = req.query.id;
     const city = req.query.cityName;
 
     //   console.log(city);
@@ -38,7 +39,7 @@ const currentWeatherCity = async (req, res) => {
     const searchData = {
       id: id,
       searchItem: JSON.stringify(searchItem),
-      userId: userId,
+      userId: req.userId,
     };
 
     const insertSearchData = await db.sequelize.models.Search.insertSearchData(
@@ -46,6 +47,7 @@ const currentWeatherCity = async (req, res) => {
     );
 
     console.log(result);
+    console.log(searchData.searchItem);
     return res.status(202).json({
       // userId: userId,
       location: result.name,
@@ -116,7 +118,7 @@ const weeklyWeatherCity = async (req, res) => {
     const searchData = {
       id: id,
       searchItem: JSON.stringify(searchItem),
-      userId: userId,
+      userId: req.userId,
     };
 
     const insertSearchData = await db.sequelize.models.Search.insertSearchData(
@@ -135,7 +137,7 @@ const weeklyWeatherCity = async (req, res) => {
 const currentWeatherLatLong = async (req, res) => {
   try {
     const id = Math.floor(100000 + Math.random() * 900000);
-    const userId = req.query.id;
+    // const userId = req.query.id;
     const lat = req.query.lat;
     const long = req.query.lon;
     const part = "minutely,hourly,daily,alerts";
@@ -163,7 +165,7 @@ const currentWeatherLatLong = async (req, res) => {
     const searchData = {
       id: id,
       searchItem: JSON.stringify(searchItem),
-      userId: userId,
+      userId: req.userId,
     };
 
     const insertSearchData = await db.sequelize.models.Search.insertSearchData(
@@ -188,7 +190,7 @@ const currentWeatherLatLong = async (req, res) => {
 const weeklyWeatherLatLong = async (req, res) => {
   try {
     const id = Math.floor(100000 + Math.random() * 900000);
-    const userId = req.query.id;
+    // const userId = req.query.id;
     const lat = req.query.lat;
     const long = req.query.lon;
 
@@ -234,7 +236,7 @@ const weeklyWeatherLatLong = async (req, res) => {
     const searchData = {
       id: id,
       searchItem: JSON.stringify(searchItem),
-      userId: userId,
+      userId: req.userId,
     };
 
     const insertSearchData = await db.sequelize.models.Search.insertSearchData(
@@ -253,7 +255,9 @@ const weeklyWeatherLatLong = async (req, res) => {
 const currentWeatherIP = async (req, res) => {
   try {
     const id = Math.floor(100000 + Math.random() * 900000);
-    const userId = req.query.id;
+    // const userId = req.id;
+    // console.log("weatherController");
+    // console.log(userId);
 
     let url = `http://ip-api.com/json/`; //getting the ip details
     let resUrl = await fetchAPI.fetch(url);
@@ -283,7 +287,7 @@ const currentWeatherIP = async (req, res) => {
     const searchData = {
       id: id,
       searchItem: JSON.stringify(searchItem),
-      userId: userId,
+      userId: req.userId,
     };
 
     const insertSearchData = await db.sequelize.models.Search.insertSearchData(
@@ -291,6 +295,8 @@ const currentWeatherIP = async (req, res) => {
     );
 
     console.log(result);
+    // console.log(process.env.tokenJWT);
+
     return res.status(202).json({
       // userId: userId,
       ip: ip,
