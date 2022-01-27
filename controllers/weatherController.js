@@ -1,6 +1,5 @@
 require("dotenv").config();
 const _ = require("lodash");
-// const fetchAPI = require("node-fetch");
 
 const fetchAPI = require("../library/fetchAPI");
 const db = require("../models");
@@ -12,7 +11,7 @@ const currentWeatherCity = async (req, res) => {
   try {
     const city = req.query.cityName;
 
-    console.log(city);
+    // console.log(city);
 
     const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKeyWeather}`;
 
