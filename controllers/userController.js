@@ -1,30 +1,18 @@
-// const res = require("express/lib/response");
-// const joi = require("joi");
 require("dotenv").config();
-// process.env.tokenJWT = 1234;
+
 const jwt = require("jsonwebtoken");
 const _ = require("lodash");
 const hashedPassword = require("password-hash");
 const Chance = require("chance");
 const chance = new Chance();
+
 const db = require("../models");
 
 const createUser = async (req, res) => {
   try {
-    // console.log(req.val);
-    // console.log(val);
-    // if (_.size(req.body.inputs) != 5) {
-    //   return res.status(400).json({ message: "Insufficient Data to Proceed" });
-    // }
-
-    // if (!_.isEqual(req.body.inputs.password, req.body.inputs.reEnterPassword)) {
-    //   return res.status(404).json({ message: "Password Missmatched" });
-    // }
-
-    // const id = Math.floor(100000 + Math.random() * 900000);
     const id = chance.integer({ min: 100000, max: 999999 });
-    // console.log(id);
     const hashedPass = hashedPassword.generate(req.body.inputs.password);
+    // console.log(id, hashedPass);
 
     const userDetails = {
       id: id,
@@ -79,6 +67,7 @@ const userLogin = async (req, res) => {
       // console.log(process.env.tokenJWT);
       // console.log(jwt.verify(process.env.tokenJWT, "secret"));
       return res.status(200).json({
+        // token: "Bearer " + process.env.tokenJWT,
         message: "Logged In",
         // userDetails: fetchUser,
       });
@@ -93,7 +82,6 @@ const userLogin = async (req, res) => {
 
 const userSearchHistory = async (req, res) => {
   try {
-    // const userId = req.query.id;
     let limit = 10;
     if (req.query.limit) {
       limit = req.query.limit;
