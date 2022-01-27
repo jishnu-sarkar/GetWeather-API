@@ -19,8 +19,6 @@ describe("weatherController", () => {
       status.returns(res);
       fetch = sinon.stub(fetchLib, "fetch");
       date = Math.floor(new Date().getTime() / 1000);
-      // date = new Date().getTime();
-      // date = new Date(result.dt * 1000).toLocaleDateString();
     });
     afterEach(() => {
       fetch.restore();
