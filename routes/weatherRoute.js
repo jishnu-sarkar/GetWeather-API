@@ -8,7 +8,7 @@ router.get("/city/forecast", weatherController.weeklyWeatherCity);
 
 router.get("/geolocation", weatherController.currentWeatherLatLong);
 
-router.get("/geolocation/forecast", weatherController.weeklyWeatherLatLong); //id in betweet 1-16 we will use only 7 : w demo
+router.get("/geolocation/forecast", weatherController.weeklyWeatherLatLong);
 
 router.get("/", weatherController.currentWeatherIP);
 

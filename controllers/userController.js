@@ -32,14 +32,20 @@ const createUser = async (req, res) => {
     }
 
     const result = await db.sequelize.models.User.createUser(userDetails);
-    if (result) {
-      return res.status(201).json({
-        message: "User Created",
-        details: result,
-      });
-    } else {
+
+    if (!result) {
       return res.status(404).json({ message: "Something Went Wrong!!!" });
     }
+    const accessToken = jwt.sign(
+      userDetails.email,
+      process.env.accessTokenSecret
+    );
+
+    return res.status(201).setHeader("token", accessToken).json({
+      // token: accessToken,
+      message: "User Created",
+      details: result.email,
+    });
   } catch (err) {
     console.log(err.message);
     return res.status(464).json({ message: err.message });
@@ -48,32 +54,24 @@ const createUser = async (req, res) => {
 
 const userLogin = async (req, res) => {
   try {
-    console.log(`${process.env.tokenJWT}`);
-    if (_.size(req.body.inputs) != 2) {
-      return res.status(400).json({ message: "Insufficient Data to Proceed" });
-    }
     const email = req.body.inputs.email;
 
     const fetchUser = await db.sequelize.models.User.findUser(email);
-    // console.log(fetchUser[0].password);
 
     if (!fetchUser) {
       return res.status(404).json({ message: "User not found" });
     }
-    // console.log(fetchUser.password);
 
-    if (hashedPassword.verify(req.body.inputs.password, fetchUser.password)) {
-      process.env.tokenJWT = jwt.sign(email, "secret");
-      // console.log(process.env.tokenJWT);
-      // console.log(jwt.verify(process.env.tokenJWT, "secret"));
-      return res.status(200).json({
-        // token: "Bearer " + process.env.tokenJWT,
-        message: "Logged In",
-        // userDetails: fetchUser,
-      });
-    } else {
+    if (!hashedPassword.verify(req.body.inputs.password, fetchUser.password)) {
       return res.status(401).json({ message: "Incorrect Password" });
     }
+
+    const accessToken = jwt.sign(email, process.env.accessTokenSecret);
+
+    return res.status(200).setHeader("token", accessToken).json({
+      // token: accessToken,
+      message: "Logged In",
+    });
   } catch (err) {
     console.log(err.message);
     return res.status(464).json({ message: err.message });

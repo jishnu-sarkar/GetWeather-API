@@ -63,9 +63,8 @@ const currentWeatherCity = async (req, res) => {
 const weeklyWeatherCity = async (req, res) => {
   try {
     const id = Math.floor(100000 + Math.random() * 900000);
-    const userId = req.query.id;
     const city = req.query.cityName;
-    //   console.log(city);
+
     let url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKeyWeather}`;
     let resUrl = await fetchAPI.fetch(url);
     let result = await resUrl.json();
@@ -93,15 +92,6 @@ const weeklyWeatherCity = async (req, res) => {
       };
     });
 
-    // const searchItem = {
-    //   Request: "Weather by City Name",
-    //   Response: {
-    //     result,
-    //   },
-    // };
-
-    // console.log(_.last(result).date);
-
     const searchItem = {
       Request: "Weekly Weather by City Name",
       Response: {
@@ -110,10 +100,6 @@ const weeklyWeatherCity = async (req, res) => {
         to: _.last(result).date,
       },
     };
-
-    // const searchItem = result;
-
-    // console.log(searchItem);
 
     const searchData = {
       id: id,
@@ -137,7 +123,6 @@ const weeklyWeatherCity = async (req, res) => {
 const currentWeatherLatLong = async (req, res) => {
   try {
     const id = Math.floor(100000 + Math.random() * 900000);
-    // const userId = req.query.id;
     const lat = req.query.lat;
     const long = req.query.lon;
     const part = "minutely,hourly,daily,alerts";
@@ -190,7 +175,6 @@ const currentWeatherLatLong = async (req, res) => {
 const weeklyWeatherLatLong = async (req, res) => {
   try {
     const id = Math.floor(100000 + Math.random() * 900000);
-    // const userId = req.query.id;
     const lat = req.query.lat;
     const long = req.query.lon;
 
@@ -214,13 +198,6 @@ const weeklyWeatherLatLong = async (req, res) => {
         date: new Date(val.dt * 1000).toLocaleDateString(),
       };
     });
-
-    // const searchItem = {
-    //   Request: "Weekly Weather by GeoLocation",
-    //   Response: {
-    //     result,
-    //   },
-    // };
 
     const searchItem = {
       Request: "Weekly Weather by GeoLocation",
@@ -255,9 +232,6 @@ const weeklyWeatherLatLong = async (req, res) => {
 const currentWeatherIP = async (req, res) => {
   try {
     const id = Math.floor(100000 + Math.random() * 900000);
-    // const userId = req.id;
-    // console.log("weatherController");
-    // console.log(userId);
 
     let url = `http://ip-api.com/json/`; //getting the ip details
     let resUrl = await fetchAPI.fetch(url);

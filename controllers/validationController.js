@@ -22,21 +22,11 @@ const validateRegistration = async (req, res, next) => {
     reEnterPassword: joiValidator.ref("password"),
   });
 
-  //   const payLoad = {
-  //     firstname: `${data.firstName}`,
-  //     lastname: `${data.lastName}`,
-  //     email: `${data.email}`,
-  //     password: `${data.password}`,
-  //     reEnterPassword: `${data.reEnterPassword}`,
-  //   };
-  //   console.log(payLoad);
-
   const { error } = schema.validate(data);
 
   if (error) {
     return res.status(406).json({ message: error.message });
   }
-  // req.val = "1234";
   return next();
 };
 
@@ -62,17 +52,21 @@ const validateLogin = async (req, res, next) => {
 };
 
 const validateUser = async (req, res, next) => {
-  // console.log(process.env.tokenJWT);
-  if (!process.env.tokenJWT) {
-    return res.status(401).json({ message: "Unauthorized Access" });
-  }
-  const valid = jwt.verify(process.env.tokenJWT, "secret");
-  // console.log(valid);
-  // const check = await db.sequelize.models.User.findUser(email);
-  const user = await db.sequelize.models.User.findUser(valid);
-  req.userId = user.id;
-  // console.log("\n\n");
-  next();
+  console.log("loginValidate");
+  const authHeader = req.headers.authorization;
+  console.log(authHeader);
+  const token = authHeader.split(" ")[1];
+  if (!token) return res.status(401).json({ message: "Unauthorized Access" });
+
+  jwt.verify(token, process.env.accessTokenSecret, (err, user) => {
+    if (err) return res.status(403).json({ message: "Sesson Expired" });
+    req.user = user;
+    next();
+  });
+
+  // const user = await db.sequelize.models.User.findUser(valid);
+  // req.userId = user.id;
+  // next();
 };
 
 module.exports = {
