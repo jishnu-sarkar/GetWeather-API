@@ -34,7 +34,7 @@ describe("weatherController", () => {
       };
       fetch.resolves(null);
       const result = await weatherController.currentWeatherCity(req, res);
-      expect(status.calledWith(500)).to.be.true;
+      expect(status.calledWith(404)).to.be.true;
       expect(json.calledWith({ message: "something went wrong" })).to.be.true;
     });
 
@@ -94,7 +94,7 @@ describe("weatherController", () => {
       };
       fetch.resolves(null);
       const result = await weatherController.currentWeatherLatLong(req, res);
-      expect(status.calledWith(500)).to.be.true;
+      expect(status.calledWith(404)).to.be.true;
       expect(json.calledWith({ message: "something went wrong" })).to.be.true;
     });
 
