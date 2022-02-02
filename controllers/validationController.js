@@ -25,7 +25,7 @@ const validateRegistration = async (req, res, next) => {
   const { error } = schema.validate(data);
 
   if (error) {
-    return res.status(406).json({ message: error.message });
+    return res.status(404).json({ message: error.message });
   }
   return next();
 };
@@ -45,7 +45,7 @@ const validateLogin = async (req, res, next) => {
   const { error } = schema.validate(data);
 
   if (error) {
-    return res.status(406).json({ message: error.message });
+    return res.status(404).json({ message: error.message });
   }
 
   return next();

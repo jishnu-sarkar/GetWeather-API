@@ -7,6 +7,63 @@ const db = require("../models");
 
 const apiKeyWeather = `${process.env.apiKeyWeather}`;
 
+//Get Current Weather Based upon User's current IP Location
+const currentWeatherIP = async (req, res) => {
+  try {
+    const id = Math.floor(100000 + Math.random() * 900000);
+
+    let url = `http://ip-api.com/json/`; //getting the ip details
+    let resUrl = await fetchAPI.fetch(url);
+    let result = await resUrl.json();
+
+    const ip = `${result.query}`;
+    const city = `${result.city}`; //taking the city from details
+
+    url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKeyWeather}`;
+    resUrl = await fetchAPI.fetch(url);
+
+    if (_.isEmpty(resUrl)) {
+      return res.status(404).json({ message: "something went wrong" });
+    }
+
+    result = await resUrl.json();
+
+    const searchItem = {
+      Request: "Weather by IP",
+      Response: {
+        ip: ip,
+        location: result.name,
+        temperature: result.main.temp,
+        date: new Date(result.dt * 1000).toLocaleDateString(),
+      },
+    };
+
+    const searchData = {
+      id: id,
+      searchItem: JSON.stringify(searchItem),
+      userId: req.userId,
+    };
+
+    const insertSearchData = await db.sequelize.models.Search.insertSearchData(
+      searchData
+    );
+
+    // console.log(result);
+    // console.log(process.env.tokenJWT);
+
+    return res.status(201).json({
+      // userId: userId,
+      ip: ip,
+      location: result.name,
+      temperature: result.main.temp,
+      date: new Date(result.dt * 1000).toLocaleDateString(),
+    });
+  } catch (err) {
+    // console.log(err.message);
+    return res.status(500).json({ message: err.message });
+  }
+};
+
 //Get Current Weather by city name
 const currentWeatherCity = async (req, res) => {
   try {
@@ -46,16 +103,69 @@ const currentWeatherCity = async (req, res) => {
       searchData
     );
 
-    console.log(result);
-    console.log(searchData.searchItem);
-    return res.status(202).json({
+    // console.log(result);
+    // console.log(searchData.searchItem);
+
+    return res.status(201).json({
       // userId: userId,
       location: result.name,
       temperature: result.main.temp,
       date: new Date(result.dt * 1000).toLocaleDateString(),
     });
   } catch (err) {
-    return res.status(464).json({ message: err.message });
+    return res.status(500).json({ message: err.message });
+  }
+};
+
+//Get Current Weather by latitude and longitude
+const currentWeatherLatLong = async (req, res) => {
+  try {
+    const id = Math.floor(100000 + Math.random() * 900000);
+    const lat = req.query.lat;
+    const long = req.query.lon;
+    const part = "minutely,hourly,daily,alerts";
+    const url = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${long}&exclude=${part}&units=metric&appid=${apiKeyWeather}`;
+    const resUrl = await fetchAPI.fetch(url);
+
+    if (_.isEmpty(resUrl)) {
+      return res.status(404).json({ message: "something went wrong" });
+    }
+
+    const result = await resUrl.json();
+    console.log(result);
+
+    const searchItem = {
+      Request: "Weather by Latitude & Longitude",
+      Response: {
+        location: result.timezone,
+        latitude: lat,
+        longitude: long,
+        temperature: result.current.temp,
+        date: new Date(result.current.dt * 1000).toLocaleDateString(),
+      },
+    };
+
+    const searchData = {
+      id: id,
+      searchItem: JSON.stringify(searchItem),
+      userId: req.userId,
+    };
+
+    const insertSearchData = await db.sequelize.models.Search.insertSearchData(
+      searchData
+    );
+
+    return res.status(201).json({
+      // userId:userId,
+      location: result.timezone,
+      latitude: lat,
+      longitude: long,
+      temperature: result.current.temp,
+      date: new Date(result.current.dt * 1000).toLocaleDateString(),
+    });
+  } catch (err) {
+    console.log(err.message);
+    return res.status(500).json({ message: err.message });
   }
 };
 
@@ -112,62 +222,10 @@ const weeklyWeatherCity = async (req, res) => {
     );
 
     console.log(result);
-    return res.status(202).json({ result });
+    return res.status(201).json({ result });
   } catch (err) {
     console.log(err.message);
-    return res.status(464).json({ message: err.message });
-  }
-};
-
-//Get Current Weather by latitude and longitude
-const currentWeatherLatLong = async (req, res) => {
-  try {
-    const id = Math.floor(100000 + Math.random() * 900000);
-    const lat = req.query.lat;
-    const long = req.query.lon;
-    const part = "minutely,hourly,daily,alerts";
-    const url = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${long}&exclude=${part}&units=metric&appid=${apiKeyWeather}`;
-    const resUrl = await fetchAPI.fetch(url);
-
-    if (_.isEmpty(resUrl)) {
-      return res.status(404).json({ message: "something went wrong" });
-    }
-
-    const result = await resUrl.json();
-    console.log(result);
-
-    const searchItem = {
-      Request: "Weather by Latitude & Longitude",
-      Response: {
-        location: result.timezone,
-        latitude: lat,
-        longitude: long,
-        temperature: result.current.temp,
-        date: new Date(result.current.dt * 1000).toLocaleDateString(),
-      },
-    };
-
-    const searchData = {
-      id: id,
-      searchItem: JSON.stringify(searchItem),
-      userId: req.userId,
-    };
-
-    const insertSearchData = await db.sequelize.models.Search.insertSearchData(
-      searchData
-    );
-
-    return res.status(202).json({
-      // userId:userId,
-      location: result.timezone,
-      latitude: lat,
-      longitude: long,
-      temperature: result.current.temp,
-      date: new Date(result.current.dt * 1000).toLocaleDateString(),
-    });
-  } catch (err) {
-    console.log(err.message);
-    return res.status(464).json({ message: err.message });
+    return res.status(500).json({ message: err.message });
   }
 };
 
@@ -220,67 +278,11 @@ const weeklyWeatherLatLong = async (req, res) => {
       searchData
     );
 
-    console.log(result);
-    return res.status(202).json({ result });
+    // console.log(result);
+    return res.status(201).json({ result });
   } catch (err) {
-    console.log(err.message);
-    return res.status(464).json({ message: err.message });
-  }
-};
-
-//Get Current Weather Based upon User's current IP Location
-const currentWeatherIP = async (req, res) => {
-  try {
-    const id = Math.floor(100000 + Math.random() * 900000);
-
-    let url = `http://ip-api.com/json/`; //getting the ip details
-    let resUrl = await fetchAPI.fetch(url);
-    let result = await resUrl.json();
-
-    const ip = `${result.query}`;
-    const city = `${result.city}`; //taking the city from details
-
-    url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKeyWeather}`;
-    resUrl = await fetchAPI.fetch(url);
-    if (_.isEmpty(resUrl)) {
-      return res.status(404).json({ message: "something went wrong" });
-    }
-
-    result = await resUrl.json();
-
-    const searchItem = {
-      Request: "Weather by IP",
-      Response: {
-        ip: ip,
-        location: result.name,
-        temperature: result.main.temp,
-        date: new Date(result.dt * 1000).toLocaleDateString(),
-      },
-    };
-
-    const searchData = {
-      id: id,
-      searchItem: JSON.stringify(searchItem),
-      userId: req.userId,
-    };
-
-    const insertSearchData = await db.sequelize.models.Search.insertSearchData(
-      searchData
-    );
-
-    console.log(result);
-    // console.log(process.env.tokenJWT);
-
-    return res.status(202).json({
-      // userId: userId,
-      ip: ip,
-      location: result.name,
-      temperature: result.main.temp,
-      date: new Date(result.dt * 1000).toLocaleDateString(),
-    });
-  } catch (err) {
-    console.log(err.message);
-    return res.status(464).json({ message: err.message });
+    // console.log(err.message);
+    return res.status(500).json({ message: err.message });
   }
 };
 

@@ -17,14 +17,10 @@ const currentWeatherIP = async (req, res) => {
 
     url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKeyWeather}`;
 
-    // try {
     resUrl = await fetchAPI.fetch(url);
-    // } catch (err) {
-    //   return res.status(500).json({ message: err.message });
-    // }
 
     if (_.isEmpty(resUrl)) {
-      return res.status(500).json({ message: "something went wrong" });
+      return res.status(404).json({ message: "something went wrong" });
     }
 
     result = await resUrl.json();
@@ -54,7 +50,7 @@ const currentWeatherCity = async (req, res) => {
     const resUrl = await fetchAPI.fetch(url);
 
     if (_.isEmpty(resUrl)) {
-      return res.status(500).json({ message: "something went wrong" });
+      return res.status(404).json({ message: "something went wrong" });
     }
     const result = await resUrl.json();
 
@@ -82,7 +78,7 @@ const currentWeatherLatLong = async (req, res) => {
     const resUrl = await fetchAPI.fetch(url);
 
     if (_.isEmpty(resUrl)) {
-      return res.status(500).json({ message: "something went wrong" });
+      return res.status(404).json({ message: "something went wrong" });
     }
     const result = await resUrl.json();
 
@@ -117,7 +113,7 @@ const weeklyWeatherCity = async (req, res) => {
     resUrl = await fetchAPI.fetch(url);
 
     if (_.isEmpty(resUrl)) {
-      return res.status(500).json({ message: "something went wrong" });
+      return res.status(404).json({ message: "something went wrong" });
     }
 
     result = await resUrl.json();
@@ -162,11 +158,11 @@ const weeklyWeatherLatLong = async (req, res) => {
       };
     });
 
-    console.log(result);
-    return res.status(202).json({ result });
+    // console.log(result);
+    return res.status(200).json({ result });
   } catch (err) {
-    console.log(err.message);
-    return res.status(464).json({ message: err.message });
+    // console.log(err.message);
+    return res.status(500).json({ message: err.message });
   }
 };
 

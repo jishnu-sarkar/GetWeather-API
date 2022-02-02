@@ -28,18 +28,18 @@ const createUser = async (req, res) => {
     // console.log(emailExists);
 
     if (emailExists) {
-      return res.status(409).json({ message: "Email already registered" });
+      return res.status(200).json({ message: "Email already registered" });
     }
 
     const result = await db.sequelize.models.User.createUser(userDetails);
 
     if (!result) {
-      return res.status(404).json({ message: "Something Went Wrong!!!" });
+      return res.status(500).json({ message: "Something Went Wrong!!!" });
     }
     const accessToken = jwt.sign(
       { email: userDetails.email },
       process.env.accessTokenSecret,
-      { expiresIn: "10s" }
+      { expiresIn: "10m" }
     );
 
     // console.log(accessToken);
@@ -51,7 +51,7 @@ const createUser = async (req, res) => {
     });
   } catch (err) {
     // console.log(err.message);
-    return res.status(464).json({ message: err.message });
+    return res.status(500).json({ message: err.message });
   }
 };
 
@@ -66,11 +66,11 @@ const userLogin = async (req, res) => {
     }
 
     if (!hashedPassword.verify(req.body.inputs.password, fetchUser.password)) {
-      return res.status(401).json({ message: "Incorrect Password" });
+      return res.status(400).json({ message: "Incorrect Password" });
     }
 
     const accessToken = jwt.sign({ email }, process.env.accessTokenSecret, {
-      expiresIn: "10s",
+      expiresIn: "10m",
     });
 
     return res.status(200).setHeader("token", accessToken).json({
@@ -79,7 +79,7 @@ const userLogin = async (req, res) => {
     });
   } catch (err) {
     // console.log(err.message);
-    return res.status(505).json({ message: err.message });
+    return res.status(500).json({ message: err.message });
   }
 };
 
@@ -98,13 +98,13 @@ const userSearchHistory = async (req, res) => {
     const result = await db.sequelize.models.Search.getSearchHistory(values);
 
     if (_.isEmpty(result))
-      return res.status(400).json({ messsage: "No Search Result Found" });
+      return res.status(404).json({ messsage: "No Search Result Found" });
 
     // console.log(result);
     return res.status(200).json({ result });
   } catch (err) {
     // console.log(err.message);
-    return res.status(464).json({ message: err.message });
+    return res.status(500).json({ message: err.message });
   }
 };
 
