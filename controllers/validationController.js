@@ -52,21 +52,23 @@ const validateLogin = async (req, res, next) => {
 };
 
 const validateUser = async (req, res, next) => {
-  console.log("loginValidate");
-  const authHeader = req.headers.authorization;
-  console.log(authHeader);
-  const token = authHeader.split(" ")[1];
-  if (!token) return res.status(401).json({ message: "Unauthorized Access" });
+  try {
+    // console.log("loginValidate");
+    const authHeader = req.headers.authorization;
+    // console.log(authHeader);
+    const token = authHeader.split(" ")[1];
+    if (!token) return res.status(401).json({ message: "Unauthorized Access" });
 
-  jwt.verify(token, process.env.accessTokenSecret, (err, user) => {
-    if (err) return res.status(403).json({ message: "Sesson Expired" });
-    req.user = user;
+    const decoded = jwt.verify(token, process.env.accessTokenSecret);
+    console.log(decoded);
+    const user = await db.sequelize.models.User.findUser(decoded.email);
+    req.userId = user.id;
     next();
-  });
-
-  // const user = await db.sequelize.models.User.findUser(valid);
-  // req.userId = user.id;
-  // next();
+  } catch (err) {
+    return res.status(401).json({
+      message: "Session Expired, Please Login Again!",
+    });
+  }
 };
 
 module.exports = {

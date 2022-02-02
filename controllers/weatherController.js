@@ -6,6 +6,42 @@ const db = require("../models");
 
 const apiKeyWeather = `${process.env.apiKeyWeather}`;
 
+//Get Current Weather Based upon User's current IP Location
+const currentWeatherIP = async (req, res) => {
+  try {
+    let url = `http://ip-api.com/json/`; //getting the ip details
+    let resUrl = await fetchAPI.fetch(url);
+    let result = await resUrl.json();
+    const ip = `${result.query}`;
+    const city = `${result.city}`; //taking the city from details
+
+    url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKeyWeather}`;
+
+    // try {
+    resUrl = await fetchAPI.fetch(url);
+    // } catch (err) {
+    //   return res.status(500).json({ message: err.message });
+    // }
+
+    if (_.isEmpty(resUrl)) {
+      return res.status(500).json({ message: "something went wrong" });
+    }
+
+    result = await resUrl.json();
+    // console.log(result);
+
+    return res.status(200).json({
+      ip: ip,
+      location: result.name,
+      temperature: result.main.temp,
+      date: new Date(result.dt * 1000).toLocaleDateString(),
+    });
+  } catch (err) {
+    // console.log(err.message);
+    return res.status(500).json({ message: err.message });
+  }
+};
+
 //Get Current Weather by city name
 const currentWeatherCity = async (req, res) => {
   try {
@@ -18,20 +54,48 @@ const currentWeatherCity = async (req, res) => {
     const resUrl = await fetchAPI.fetch(url);
 
     if (_.isEmpty(resUrl)) {
-      return res.status(404).json({ message: "something went wrong" });
+      return res.status(500).json({ message: "something went wrong" });
     }
     const result = await resUrl.json();
 
-    console.log(result);
+    // console.log(result);
 
-    return res.status(202).json({
+    return res.status(200).json({
       location: result.name,
       temperature: result.main.temp,
       date: new Date(result.dt * 1000).toLocaleDateString(),
     });
   } catch (err) {
-    console.log(err.message);
-    return res.status(464).json({ message: err.message });
+    // console.log(err.message);
+    return res.status(500).json({ message: err.message });
+  }
+};
+
+//Get Current Weather by latitude and longitude
+const currentWeatherLatLong = async (req, res) => {
+  try {
+    const lat = req.query.lat;
+    const long = req.query.lon;
+    const part = "minutely,hourly,daily,alerts";
+    const url = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${long}&exclude=${part}&units=metric&appid=${apiKeyWeather}`;
+
+    const resUrl = await fetchAPI.fetch(url);
+
+    if (_.isEmpty(resUrl)) {
+      return res.status(500).json({ message: "something went wrong" });
+    }
+    const result = await resUrl.json();
+
+    // console.log(result);
+    return res.status(200).json({
+      // result: result,
+      location: result.timezone,
+      temperature: result.current.temp,
+      date: new Date(result.current.dt * 1000).toLocaleDateString(),
+    });
+  } catch (err) {
+    // console.log(err.message);
+    return res.status(500).json({ message: err.message });
   }
 };
 
@@ -47,13 +111,13 @@ const weeklyWeatherCity = async (req, res) => {
     const long = result.coord.lon;
     const part = "current,minutely,hourly,alerts";
 
-    console.log(lat, long);
+    // console.log(lat, long);
 
     url = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${long}&exclude=${part}&units=metric&appid=${apiKeyWeather}`;
     resUrl = await fetchAPI.fetch(url);
 
     if (_.isEmpty(resUrl)) {
-      return res.status(404).json({ message: "something went wrong" });
+      return res.status(500).json({ message: "something went wrong" });
     }
 
     result = await resUrl.json();
@@ -68,37 +132,10 @@ const weeklyWeatherCity = async (req, res) => {
     });
 
     console.log(result);
-    return res.status(202).json({ result });
+    return res.status(200).json({ result });
   } catch (err) {
     console.log(err.message);
-    return res.status(464).json({ message: err.message });
-  }
-};
-
-//Get Current Weather by latitude and longitude
-const currentWeatherLatLong = async (req, res) => {
-  try {
-    const lat = req.query.lat;
-    const long = req.query.lon;
-    const part = "minutely,hourly,daily,alerts";
-    const url = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${long}&exclude=${part}&units=metric&appid=${apiKeyWeather}`;
-    const resUrl = await fetchAPI.fetch(url);
-
-    if (_.isEmpty(resUrl)) {
-      return res.status(404).json({ message: "something went wrong" });
-    }
-    const result = await resUrl.json();
-
-    console.log(result);
-    return res.status(202).json({
-      // result: result,
-      location: result.timezone,
-      temperature: result.current.temp,
-      date: new Date(result.current.dt * 1000).toLocaleDateString(),
-    });
-  } catch (err) {
-    console.log(err.message);
-    return res.status(464).json({ message: err.message });
+    return res.status(500).json({ message: err.message });
   }
 };
 
@@ -127,37 +164,6 @@ const weeklyWeatherLatLong = async (req, res) => {
 
     console.log(result);
     return res.status(202).json({ result });
-  } catch (err) {
-    console.log(err.message);
-    return res.status(464).json({ message: err.message });
-  }
-};
-
-//Get Current Weather Based upon User's current IP Location
-const currentWeatherIP = async (req, res) => {
-  try {
-    let url = `http://ip-api.com/json/`; //getting the ip details
-    let resUrl = await fetchAPI.fetch(url);
-    let result = await resUrl.json();
-    const ip = `${result.query}`;
-    const city = `${result.city}`; //taking the city from details
-
-    url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKeyWeather}`;
-    resUrl = await fetchAPI.fetch(url);
-
-    if (_.isEmpty(resUrl)) {
-      return res.status(404).json({ message: "something went wrong" });
-    }
-
-    result = await resUrl.json();
-    console.log(result);
-
-    return res.status(202).json({
-      ip: ip,
-      location: result.name,
-      temperature: result.main.temp,
-      date: new Date(result.dt * 1000).toLocaleDateString(),
-    });
   } catch (err) {
     console.log(err.message);
     return res.status(464).json({ message: err.message });

@@ -37,9 +37,12 @@ const createUser = async (req, res) => {
       return res.status(404).json({ message: "Something Went Wrong!!!" });
     }
     const accessToken = jwt.sign(
-      userDetails.email,
-      process.env.accessTokenSecret
+      { email: userDetails.email },
+      process.env.accessTokenSecret,
+      { expiresIn: "10s" }
     );
+
+    // console.log(accessToken);
 
     return res.status(201).setHeader("token", accessToken).json({
       // token: accessToken,
@@ -47,7 +50,7 @@ const createUser = async (req, res) => {
       details: result.email,
     });
   } catch (err) {
-    console.log(err.message);
+    // console.log(err.message);
     return res.status(464).json({ message: err.message });
   }
 };
@@ -66,15 +69,17 @@ const userLogin = async (req, res) => {
       return res.status(401).json({ message: "Incorrect Password" });
     }
 
-    const accessToken = jwt.sign(email, process.env.accessTokenSecret);
+    const accessToken = jwt.sign({ email }, process.env.accessTokenSecret, {
+      expiresIn: "10s",
+    });
 
     return res.status(200).setHeader("token", accessToken).json({
       // token: accessToken,
       message: "Logged In",
     });
   } catch (err) {
-    console.log(err.message);
-    return res.status(464).json({ message: err.message });
+    // console.log(err.message);
+    return res.status(505).json({ message: err.message });
   }
 };
 
@@ -92,10 +97,13 @@ const userSearchHistory = async (req, res) => {
 
     const result = await db.sequelize.models.Search.getSearchHistory(values);
 
-    console.log(result);
+    if (_.isEmpty(result))
+      return res.status(400).json({ messsage: "No Search Result Found" });
+
+    // console.log(result);
     return res.status(200).json({ result });
   } catch (err) {
-    console.log(err.message);
+    // console.log(err.message);
     return res.status(464).json({ message: err.message });
   }
 };
